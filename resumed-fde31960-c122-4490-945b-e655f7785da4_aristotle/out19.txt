@@ -1,0 +1,1 @@
+No solution for dlx_cyclic_19.txt
