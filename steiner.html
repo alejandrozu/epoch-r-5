@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="">
+  
+  <head>
+  <meta charset="UTF-8">
+  <title>steinersystems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <link rel="stylesheet" href="/steinersystems/css/normalize.css">
+  <link rel="stylesheet" href="/steinersystems/css/cayman.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+
+
+  <body>
+    <section class="main-content">
+      
+      <h1 id="steiner-systems">Steiner Systems</h1>
+
+<p>A <a href="https://en.wikipedia.org/wiki/Steiner_system">Steiner system</a> \(S(t,k,v)\) is a collection of k-sized subsets (“blocks”) of the numbers 1 to \(v\). These collections are special because every t-sized subset of the numbers 1 to \(v\) are in exactly one block.</p>
+
+<p>For example, here is a \(S(2,3,7)\) system (also known as the <a href="https://en.wikipedia.org/wiki/Fano_plane">Fano plane</a>):</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{1,2,3}
+{1,4,5}
+{1,6,7}
+{2,4,6}
+{2,5,7}
+{3,4,7}
+{3,5,6}
+</code></pre></div></div>
+
+<p>I was introduced to Steiner systems from <a href="https://dl.acm.org/doi/10.1145/66443.66446">this review article</a>. There is also good information on <a href="https://www.dmgordon.org/steiner/">Dan Gordon’s page</a>.</p>
+
+<p>Some cool facts about Steiner systems:</p>
+<ul>
+  <li>If you have a Steiner system \(S(t,k,v)\), you can make a Steiner system \(S(t-1, k-1, v-1)\) by choosing all blocks with a certain number, and deleting that number.</li>
+  <li>Steiner systems follow divisibility rules: \(S(t,k,v)\) only can exist if \({k-i \choose t-i}\) divides \({v-i \choose t-i}\) for all \(i \in \{0,\cdots,t-1\}\).</li>
+</ul>
+
+<h2 id="table-of-st-t1-v">Table of \(S(t, t+1, v)\)</h2>
+
+<p>Here are the divisibility rules for small \(t\) when \(k = t+1\):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: left">Divisibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">\(t=1\)</td>
+      <td style="text-align: left">\(v \ne 1\text{ mod }2\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(t=2\)</td>
+      <td style="text-align: left">\(v \ne 0\text{ mod }2\) and \(v \ne 2 \text{ mod }3\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(t=3\)</td>
+      <td style="text-align: left">\(v \ne 1 \text{ mod }2\) and \(v \ne 0 \text{ mod }3\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(t=4\)</td>
+      <td style="text-align: left">\(v \ne 0 \text{ mod }2\) and \(v \ne 1 \text{ mod }3\) and \(v \ne 4\text{ mod } 5\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(t=5\)</td>
+      <td style="text-align: left">\(v \ne 1\text{ mod }2\) and \(v \ne 2 \text{ mod }3\) and \(v \ne 0\text{ mod } 5\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(t=6\)</td>
+      <td style="text-align: left">\(v \ne 0 \text{ mod }2\) and \(v \ne 0 \text{ mod }3\) and \(v \ne 1\text{ mod } 5\) and \(v \ne 6\text{ mod 7}\)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>I’ve listed a table below of small values of \(t\) and \(v\).</p>
+
+<ul>
+  <li>Some values of \((t, t+1, v)\) have no associated Steiner system:
+    <ul>
+      <li>”.”, “..”, “…”, “….”: No Steiner system can exist because of divisibility rules.</li>
+      <li>”-“:  These values do not form a valid Steiner system; \(t\) must be smaller than \(v\).</li>
+      <li>“x”: There are no Steiner systems S(4, 5, 15) or S(4, 5, 17), as <a href="https://www.sciencedirect.com/science/article/pii/S0097316508000617?via%3Dihub">computationally verified here</a>.</li>
+    </ul>
+  </li>
+  <li>Some values do have a Steiner system:
+    <ul>
+      <li>“Trivial”: There is always a Steiner system \(S(t,k,k)\) with one block including all numbers from 1 to k.</li>
+      <li>“Pairs”: If \(v\) is even, then pairing all numbers from 1 to v forms a Steiner system \(S(1, 2, v)\).</li>
+      <li>“<strong>✔️</strong>”: There are Steiner systems at each \(v\) that satisfies the divisibility rules, as shown <a href="https://www.mscand.dk/article/view/10551/8572">for t=2</a> and <a href="https://core.ac.uk/download/pdf/82538615.pdf">for t=3</a>.</li>
+      <li>“<strong>M</strong>\(_{12}\)”, “<strong>M</strong>\(_{11}\)”: The Steiner system S(5, 6, 12) corresponds to the Mathieu group <strong>M</strong>\(_{12}\), which induces S(4, 5, 11) and Mathieu group <strong>M</strong>\(_{11}\).</li>
+      <li>“<strong>PSL\(_2\)(23)”</strong>: There is a known Steiner system S(5, 6, 24), as described <a href="https://www.ams.org/journals/mcom/1998-67-221/S0025-5718-98-00924-7/S0025-5718-98-00924-7.pdf">here</a> and <a href="https://londmathsoc.onlinelibrary.wiley.com/doi/abs/10.1112/blms/8.3.263">here</a>, which induces S(4, 5, 23).</li>
+      <li><strong>KNOWN</strong>: We know of Steiner systems at S(5, 6, 36) and S(5, 6, 48), as listed <a href="https://ljcr.dmgordon.org/cover/show_cover.php?v=36&amp;k=6&amp;t=5">here</a> and <a href="https://ljcr.dmgordon.org/cover/LARGE/C_48_6_5.html">here</a>.</li>
+    </ul>
+  </li>
+  <li>For the entries marked “<strong><em>?</em></strong>”,  we simply don’t know if there’s a Steiner system here!</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center">\(t=1\)</th>
+      <th style="text-align: center">\(t=2\)</th>
+      <th style="text-align: center">\(t=3\)</th>
+      <th style="text-align: center">\(t=4\)</th>
+      <th style="text-align: center">\(t=5\)</th>
+      <th style="text-align: center">\(t=6\)</th>
+      <th style="text-align: center">\(t=7\)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">\(v=1\)</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=2\)</td>
+      <td style="text-align: center">Trivial</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=3\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">Trivial</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=4\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">Trivial</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=5\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">Trivial</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=6\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">Trivial</td>
+      <td style="text-align: center">-</td>
+      <td style="text-align: center">-</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=7\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️ (<a href="https://en.wikipedia.org/wiki/Fano_plane">Fano</a>)</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">Trivial</td>
+      <td style="text-align: center">-</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=8\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">Trivial</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=9\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=10\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=11\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>M</strong>\(_{11}\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=12\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>M</strong>\(_{12}\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=13\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">….</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=14\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">….</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=15\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=16\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=17\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=18\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=19\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=20\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">x</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=21\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=22\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=23\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>PSL\(_2\)(23)</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=24\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>PSL\(_2\)(23)</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=25\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=26\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=27\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=28\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=29\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=30\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=31\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=32\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=33\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=34\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=35\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>KNOWN</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=36\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>KNOWN</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=37\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=38\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=39\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=40\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=41\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=42\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=43\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=44\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=45\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=46\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=47\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>KNOWN</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=48\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>KNOWN</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=49\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=50\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=51\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=52\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=53\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=54\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=55\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">….</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=56\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">….</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=57\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=58\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=59\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=60\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=61\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=62\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">…</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=63\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=64\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong>✔️</strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=65\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=66\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=67\)</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(v=68\)</td>
+      <td style="text-align: center">Pairs</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">✔️</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center">..</td>
+      <td style="text-align: center">.</td>
+      <td style="text-align: center"><strong><em>?</em></strong></td>
+    </tr>
+  </tbody>
+</table>
+
+
+    </section>
+  </body>
+</html>
+
